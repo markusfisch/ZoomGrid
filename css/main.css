@@ -1,0 +1,49 @@
+body
+{
+	margin: 16px;
+	padding: 0;
+}
+
+#Container
+{
+	margin: auto;
+	padding: 0;
+	width: 500px;
+	height: 500px;
+	border: 1px solid red;
+}
+
+#Container div
+{
+	margin: 4px;
+	padding: 6px;
+	border: 1px solid #a0a0a0;
+}
+
+#Container div p
+{
+ 	width: 380px;
+}
+
+#TwoContainer,
+	#SixContainer
+{
+	margin: 0;
+	padding: 0;
+	width: 200px;
+	height: 200px;
+}
+
+#TwoContainer div,
+	#SixContainer div
+{
+	margin: 0;
+	padding: 0;
+}
+
+#TwoContainer h3
+{
+	margin: 0;
+	padding: 0;
+	text-align: center;
+}
