@@ -33,18 +33,19 @@ ZoomGrid.prototype.addFrame = function( scrollDivision )
 {
 	if( scrollDivision )
 	{
-		for( var n = 0; n < this.cells.length; n++ )
+		for( var n = this.cells.length; n--; )
 		{
-			var divs = this.cells[n].getElementsByTagName( "div" );
+			var c = this.cells[n],
+				divs = c.getElementsByTagName( 'div' );
 
-			for( var d = 0; d < divs.length; d++ )
+			for( var d = divs.length; d--; )
 				if( divs[d].className == scrollDivision )
 				{
-					this.cells[n].zoomGrid.frameScrollDivision = divs[d];
+					c.zoomGrid.frameScrollDivision = divs[d];
 					break;
 				}
 
-			if( !this.cells[n].zoomGrid.frameScrollDivision )
+			if( !c.zoomGrid.frameScrollDivision )
 				return false;
 		}
 	}
@@ -60,9 +61,9 @@ ZoomGrid.prototype.addFrame = function( scrollDivision )
 		 */
 		function appendRecursively( e, classNames )
 		{
-			for( var c = 0, first = e; c < classNames.length; c++ )
+			for( var c = 0, l = classNames.length; c < l; ++c )
 			{
-				var d = document.createElement( "div" );
+				var d = document.createElement( 'div' );
 				d.className = classNames[c];
 				e.appendChild( d );
 				e = d;
@@ -71,24 +72,24 @@ ZoomGrid.prototype.addFrame = function( scrollDivision )
 			return e;
 		}
 
-		for( var n = 0; n < this.cells.length; n++ )
+		for( var n = this.cells.length; n--; )
 		{
-			var frameDiv = this.cells[n];
-			var className = frameDiv.className;
-			var innerHTML = frameDiv.innerHTML;
-			var e;
+			var frameDiv = this.cells[n],
+				className = frameDiv.className,
+				innerHTML = frameDiv.innerHTML,
+				e;
 
-			frameDiv.innerHTML = "";
-			frameDiv.className = "Frame";
+			frameDiv.innerHTML = '';
+			frameDiv.className = 'Frame';
 
-			appendRecursively( frameDiv, ["TopLeft", "TopRight"] );
-			e = appendRecursively( frameDiv, ["Left", "Right", className] );
-			appendRecursively( frameDiv, ["BottomLeft", "BottomRight"] );
+			appendRecursively( frameDiv, ['TopLeft', 'TopRight'] );
+			e = appendRecursively( frameDiv, ['Left', 'Right', className] );
+			appendRecursively( frameDiv, ['BottomLeft', 'BottomRight'] );
 
 			if( e )
 			{
 				e.innerHTML = innerHTML;
-				this.cells[n].zoomGrid.frameScrollDivision = e;
+				frameDiv.zoomGrid.frameScrollDivision = e;
 			}
 		}
 	}
@@ -112,8 +113,8 @@ ZoomGrid.prototype.addFrame = function( scrollDivision )
 		}
 
 		// scroll back
-		this.active.zoomGrid.frameScrollDivision.scrollLeft = "0px";
-		this.active.zoomGrid.frameScrollDivision.scrollTop = "0px";
+		this.active.zoomGrid.frameScrollDivision.scrollLeft = '0px';
+		this.active.zoomGrid.frameScrollDivision.scrollTop = '0px';
 
 		var oldActive = this.active;
 		this.active = this.active.zoomGrid.frameScrollDivision;
@@ -166,7 +167,10 @@ ZoomGrid.prototype.addFrame = function( scrollDivision )
 ZoomGrid.prototype.adjustScrollDivision = function()
 {
 	// adjust height of inner scroll division
-	for( var n = 0; n < this.cells.length; n++ )
-		this.cells[n].zoomGrid.frameScrollDivision.style.height =
-			(this.cells[n].offsetHeight-this.frameSize.height)+"px";
+	for( var n = this.cells.length; n--; )
+	{
+		var c = this.cells[n];
+		c.zoomGrid.frameScrollDivision.style.height =
+			(c.offsetHeight-this.frameSize.height)+'px';
+	}
 }

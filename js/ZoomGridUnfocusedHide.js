@@ -62,27 +62,31 @@ ZoomGrid.prototype.addUnfocusedHide = function( patterns )
 	// find elements to hide
 	var pat = this.parsePatterns( patterns );
 
-	for( var n = 0; n < this.cells.length; n++ )
+	for( var n = this.cells.length; n--; )
 	{
-		this.cells[n].zoomGrid.elementsToHide = [];
+		var c = this.cells[n];
+		c.zoomGrid.elementsToHide = [];
 
-		for( var p = 0; p < pat.length; p++ )
+		for( var p = pat.length; p--; )
 		{
-			var el = this.cells[n].getElementsByTagName(
-				pat[p].tagName )
+			var el = c.getElementsByTagName( pat[p].tagName ),
+				pp = pat[p];
 
-			if( !pat[p].className &&
-				!pat[p].id )
+			if( !pp.className &&
+				!pp.id )
 			{
-				this.cells[n].zoomGrid.elementsToHide.merge( el );
-
+				c.zoomGrid.elementsToHide.merge( el );
 				continue;
 			}
 
-			for( var e = 0; e < el.length; e++ )
-				if( el[e].className == pat[p].className ||
-					el[e].id == pat[p].id )
-					this.cells[n].zoomGrid.elementsToHide.push( el[e] );
+			for( var e = el.length; e--; )
+			{
+				var ee = el[e];
+
+				if( ee.className == pp.className ||
+					ee.id == pp.id )
+					c.zoomGrid.elementsToHide.push( ee );
+			}
 		}
 
 		this.hideElements( this.cells[n] );
@@ -99,8 +103,9 @@ ZoomGrid.prototype.addUnfocusedHide = function( patterns )
  */
 ZoomGrid.prototype.hideElements = function( e )
 {
-	for( var n = 0; n < e.zoomGrid.elementsToHide.length; n++ )
-		e.zoomGrid.elementsToHide[n].style.display = "none";
+	e = e.zoomGrid.elementsToHide;
+	for( var n = e.length; n--; )
+		e[n].style.display = 'none';
 }
 
 /**
@@ -111,6 +116,7 @@ ZoomGrid.prototype.hideElements = function( e )
  */
 ZoomGrid.prototype.showElements = function( e )
 {
-	for( var n = 0; n < e.zoomGrid.elementsToHide.length; n++ )
-		e.zoomGrid.elementsToHide[n].style.display = "block";
+	e = e.zoomGrid.elementsToHide;
+	for( var n = e.length; n--; )
+		e[n].style.display = 'block';
 }

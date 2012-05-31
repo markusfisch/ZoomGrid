@@ -32,24 +32,24 @@ ZoomGrid.prototype.addMaxChildWidth = function( list )
 	{
 		var pat = this.parsePatterns( list[propertyName] );
 
-		for( var n = 0; n < this.cells.length; n++ )
-			for( var p = 0; p < pat.length; p++ )
+		for( var n = this.cells.length; n--; )
+			for( var p = pat.length; p--; )
 			{
-				var el = this.cells[n].getElementsByTagName(
-					pat[p].tagName )
+				var el = this.cells[n].getElementsByTagName( pat[p].tagName ),
+					pe = pat[p];
 
-				if( !pat[p].className &&
-					!pat[p].id )
+				if( !pe.className &&
+					!pe.id )
 				{
-					for( var e = 0; e < el.length; e++ )
-						el[e].style[propertyName] = w+"px";
+					for( var e = el.length; e--; )
+						el[e].style[propertyName] = w+'px';
 				}
 				else
 				{
-					for( var e = 0; e < el.length; e++ )
-						if( el[e].className == pat[p].className ||
-							el[e].id == pat[p].id )
-							el[e].style[propertyName] = w+"px";
+					for( var e = el.length; e--; )
+						if( el[e].className == pe.className ||
+							el[e].id == pe.id )
+							el[e].style[propertyName] = w+'px';
 				}
 			}
 	}

@@ -76,7 +76,7 @@ function ZoomGrid( properties )
 	 * @access protected
 	 * @var string
 	 */
-	this.tagName = "DIV";
+	this.tagName = 'DIV';
 
 	/**
 	 * Container element
@@ -136,12 +136,14 @@ ZoomGrid.prototype.create = function( container )
 
 	this.container = container;
 
-	for( var n = 0; n < container.childNodes.length; n++ )
+	for( var n = 0, l = container.childNodes.length; n < l; ++n )
 	{
-		if( container.childNodes[n].tagName != this.tagName )
+		var c = container.childNodes[n];
+
+		if( c.tagName != this.tagName )
 			continue;
 
-		this.cells[this.cells.length] = container.childNodes[n];
+		this.cells[this.cells.length] = c;
 	}
 
 	if( !this.cells.length )
@@ -165,18 +167,20 @@ ZoomGrid.prototype.create = function( container )
 		return;
 
 	while( this.columns*this.rows < this.cells.length )
-		this.columns++;
+		++this.columns;
 
-	for( var n = 0; n < this.cells.length; n++ )
+	for( var n = this.cells.length; n--; )
 	{
-		this.cells[n].zoomGrid = { zoomGrid: this };
-		this.cells[n].style.position = 'absolute';
-		this.cells[n].style.overflow = 'hidden';
+		var c = this.cells[n];
+
+		c.zoomGrid = { zoomGrid: this };
+		c.style.position = 'absolute';
+		c.style.overflow = 'hidden';
 
 		if( this.zoomOnClick )
-			this.cells[n].onclick = this.enterCell;
+			c.onclick = this.enterCell;
 		else
-			this.cells[n].onmouseover = this.enterCell;
+			c.onmouseover = this.enterCell;
 	}
 
 	container.zoomGrid = { zoomGrid: this };
@@ -257,45 +261,47 @@ ZoomGrid.prototype.enterCell = function( ev )
  */
 ZoomGrid.prototype.restore = function( setup )
 {
-	var w = Math.round( this.container.offsetWidth/this.columns );
-	var h = Math.round( this.container.offsetHeight/this.rows );
-	var x = 0;
-	var y = 0;
-	var c = 0;
+	var w = Math.round( this.container.offsetWidth/this.columns ),
+		h = Math.round( this.container.offsetHeight/this.rows ),
+		x = 0,
+		y = 0,
+		col = 0;
 
 	this.clearMoveTimer();
 	this.startMove();
 
 	this.active = 0;
 
-	for( var n = 0; n < this.cells.length; n++ )
+	for( var n = 0, l = this.cells.length; n < l; ++n )
 	{
-		this.cells[n].zoomGrid.left = x;
-		this.cells[n].zoomGrid.top = y;
-		this.cells[n].scrollLeft = "0px";
-		this.cells[n].scrollTop = "0px";
+		var c = this.cells[n];
+
+		c.zoomGrid.left = x;
+		c.zoomGrid.top = y;
+		c.scrollLeft = '0px';
+		c.scrollTop = '0px';
 
 		// this values are for sub classes only
-		this.cells[n].zoomGrid.targetWidth = w;
-		this.cells[n].zoomGrid.targetHeight = h;
+		c.zoomGrid.targetWidth = w;
+		c.zoomGrid.targetHeight = h;
 
 		if( setup )
 		{
-			this.cells[n].style.left = this.cells[n].zoomGrid.left+"px";
-			this.cells[n].style.top = this.cells[n].zoomGrid.top+"px";
-			this.cells[n].style.width =
-				(w-this.paddingMarginBorder.width)+"px";
-			this.cells[n].style.height =
-				(h-this.paddingMarginBorder.height)+"px";
+			c.style.left = c.zoomGrid.left+'px';
+			c.style.top = c.zoomGrid.top+'px';
+			c.style.width =
+				(w-this.paddingMarginBorder.width)+'px';
+			c.style.height =
+				(h-this.paddingMarginBorder.height)+'px';
 		}
 
 		x += w;
 
-		if( ++c >= this.columns )
+		if( ++col >= this.columns )
 		{
 			x = 0;
 			y += h;
-			c = 0;
+			col = 0;
 		}
 	}
 
@@ -316,12 +322,12 @@ ZoomGrid.prototype.restore = function( setup )
  */
 ZoomGrid.prototype.zoom = function( e )
 {
-	var cellWidth = 0;
-	var cellHeight = 0;
-	var focusedWidth = 0;
-	var focusedHeight = 0;
-	var focusedColumn = -1;
-	var focusedRow = -1;
+	var cellWidth = 0,
+		cellHeight = 0,
+		focusedWidth = 0,
+		focusedHeight = 0,
+		focusedColumn = -1,
+		focusedRow = -1;
 
 	this.clearMoveTimer();
 	this.startMove();
@@ -330,8 +336,8 @@ ZoomGrid.prototype.zoom = function( e )
 
 	// calculate width and height of focused and unfocused cells
 	{
-		var columnsLeft = this.columns-1;
-		var rowsLeft = this.rows-1;
+		var columnsLeft = this.columns-1,
+			rowsLeft = this.rows-1;
 
 		cellWidth = this.foldedSize.width;
 		cellHeight = this.foldedSize.height;
@@ -343,56 +349,57 @@ ZoomGrid.prototype.zoom = function( e )
 
 	// determine focused column and row
 	{
-		var c = 0;
-		var r = 0;
+		var col = 0,
+			row = 0;
 
-		for( var n = 0; n < this.cells.length; n++ )
+		for( var n = 0, l = this.cells.length; n < l; ++n )
 		{
 			if( this.cells[n] == e )
 			{
 				this.active = e;
-				focusedColumn = c;
-				focusedRow = r;
+				focusedColumn = col;
+				focusedRow = row;
 				break;
 			}
 
-			if( ++c >= this.columns )
+			if( ++col >= this.columns )
 			{
-				c = 0;
-				r++;
+				col = 0;
+				++row;
 			}
 		}
 	}
 
 	// now lay out cells
 	{
-		var x = 0;
-		var y = 0;
-		var c = 0;
-		var r = 0;
+		var x = 0,
+			y = 0,
+			col = 0,
+			row = 0;
 
-		for( var n = 0; n < this.cells.length; n++ )
+		for( var n = 0, l = this.cells.length; n < l; ++n )
 		{
-			var w = (c == focusedColumn ? focusedWidth : cellWidth);
-			var h = (r == focusedRow ? focusedHeight : cellHeight);
+			var c = this.cells[n],
+				w = (col == focusedColumn ? focusedWidth : cellWidth),
+				h = (row == focusedRow ? focusedHeight : cellHeight);
 
-			this.cells[n].zoomGrid.left = x;
-			this.cells[n].zoomGrid.top = y;
-			this.cells[n].scrollLeft = "0px";
-			this.cells[n].scrollTop = "0px";
+			c.zoomGrid.left = x;
+			c.zoomGrid.top = y;
+			c.scrollLeft = '0px';
+			c.scrollTop = '0px';
 
 			// this values are for sub classes only
-			this.cells[n].zoomGrid.targetWidth = w;
-			this.cells[n].zoomGrid.targetHeight = h;
+			c.zoomGrid.targetWidth = w;
+			c.zoomGrid.targetHeight = h;
 
 			x += w;
 
-			if( ++c >= this.columns )
+			if( ++col >= this.columns )
 			{
 				x = 0;
 				y += h;
-				c = 0;
-				r++;
+				col = 0;
+				++row;
 			}
 		}
 	}
@@ -448,14 +455,14 @@ ZoomGrid.prototype.move = function()
 	var touched = false;
 
 	// set horizontal positions
-	for( var c = 0, n = 0, l = this.columns-1;
-		c < this.columns;
-		c++, n++ )
+	for( var col = 0, n = 0, l = this.columns-1;
+		col < this.columns;
+		++col, ++n )
 	{
-		var d;
+		var c = this.cells[n],
+			d;
 
-		if( (d = this.cells[n].zoomGrid.left-
-			this.cells[n].offsetLeft) != 0 )
+		if( (d = c.zoomGrid.left-c.offsetLeft) != 0 )
 		{
 			var s;
 
@@ -466,7 +473,7 @@ ZoomGrid.prototype.move = function()
 					this.columns,
 					this.rows,
 					'left',
-					this.cells[n].zoomGrid.left+"px" );
+					c.zoomGrid.left+'px' );
 			}
 			else
 			{
@@ -475,7 +482,7 @@ ZoomGrid.prototype.move = function()
 					this.columns,
 					this.rows,
 					'left',
-					(this.cells[n].offsetLeft+s)+"px" );
+					(c.offsetLeft+s)+'px' );
 
 				touched = true;
 			}
@@ -490,34 +497,34 @@ ZoomGrid.prototype.move = function()
 				this.columns,
 				this.rows,
 				'width',
-				(this.cells[n].offsetLeft-
+				(c.offsetLeft-
 					this.cells[last].offsetLeft-
-					this.paddingMarginBorder.width)+"px" );
+					this.paddingMarginBorder.width)+'px' );
 		}
 
-		if( c >= l )
+		if( col >= l )
 			this.setStack(
 				n,
 				this.columns,
 				this.rows,
 				'width',
 				(this.container.offsetWidth-
-					this.cells[n].offsetLeft-
-					this.paddingMarginBorder.width)+"px" );
+					c.offsetLeft-
+					this.paddingMarginBorder.width)+'px' );
 	}
 
 	// set vertical positions
-	for( var r = 0, n = 0, l = this.rows-1;
-		r < this.rows;
-		r++, n += this.columns )
+	for( var row = 0, n = 0, l = this.rows-1, cl = this.cells.length;
+		row < this.rows;
+		++row, n += this.columns )
 	{
-		var d;
-
-		if( n >= this.cells.length )
+		if( n >= cl )
 			break;
 
-		if( (d = this.cells[n].zoomGrid.top-
-			this.cells[n].offsetTop) != 0 )
+		var c = this.cells[n],
+			d;
+
+		if( (d = c.zoomGrid.top-c.offsetTop) != 0 )
 		{
 			var s;
 
@@ -528,7 +535,7 @@ ZoomGrid.prototype.move = function()
 					1,
 					this.columns,
 					'top',
-					this.cells[n].zoomGrid.top+"px" );
+					c.zoomGrid.top+'px' );
 			}
 			else
 			{
@@ -537,7 +544,7 @@ ZoomGrid.prototype.move = function()
 					1,
 					this.columns,
 					'top',
-					(this.cells[n].offsetTop+s)+"px" );
+					(c.offsetTop+s)+'px' );
 
 				touched = true;
 			}
@@ -552,21 +559,21 @@ ZoomGrid.prototype.move = function()
 				1,
 				this.columns,
 				'height',
-				(this.cells[n].offsetTop-
+				(c.offsetTop-
 					this.cells[last].offsetTop-
-					this.paddingMarginBorder.height)+"px" );
+					this.paddingMarginBorder.height)+'px' );
 		}
 
-		if( r == l ||
-			n+this.columns >= this.cells.length )
+		if( row == l ||
+			n+this.columns >= cl )
 			this.setStack(
 				n,
 				1,
 				this.columns,
 				'height',
 				(this.container.offsetHeight-
-					this.cells[n].offsetTop-
-					this.paddingMarginBorder.height)+"px" );
+					c.offsetTop-
+					this.paddingMarginBorder.height)+'px' );
 	}
 
 	this.moving();
@@ -586,7 +593,7 @@ ZoomGrid.prototype.move = function()
 }
 
 /**
- * Calculate amount we want to get nearer at a time
+ * Calculate amount to get closer at a time
  *
  * @access protected
  * @param d - distance in pixels
@@ -624,26 +631,27 @@ ZoomGrid.prototype.parsePatterns = function( patterns )
 {
 	var pat = [];
 
-	for( var i = 0; i < patterns.length; i++ )
+	for( var i = 0, l = patterns.length; i < l; ++i )
 	{
-		var p;
+		var p,
+			pi = patterns[i];
 
-		if( (p = patterns[i].indexOf( '.' )) > -1 )
+		if( (p = pi.indexOf( '.' )) > -1 )
 		{
-			var t = patterns[i].substr( 0, p );
-			var c = patterns[i].substr( p+1 );
+			var t = pi.substr( 0, p );
+			var c = pi.substr( p+1 );
 
 			pat.push( { tagName: t, className: c } );
 		}
-		else if( (p = patterns[i].indexOf( '#' )) > -1 )
+		else if( (p = pi.indexOf( '#' )) > -1 )
 		{
-			var t = patterns[i].substr( 0, p );
-			var d = patterns[i].substr( p+1 );
+			var t = pi.substr( 0, p );
+			var d = pi.substr( p+1 );
 
 			pat.push( { tagName: t, id: d } );
 		}
 		else
-			pat.push( { tagName: patterns[i] } );
+			pat.push( { tagName: pi } );
 	}
 
 	return pat;
@@ -661,9 +669,11 @@ ZoomGrid.prototype.parsePatterns = function( patterns )
  */
 ZoomGrid.prototype.setStack = function( i, s, m, p, v )
 {
-	for( var n = i; m > 0; n += s, m-- )
+	for( var n = i, l = this.cells.length;
+		m > 0;
+		n += s, --m )
 	{
-		if( n >= this.cells.length )
+		if( n >= l )
 			return;
 
 		this.cells[n].style[p] = v;

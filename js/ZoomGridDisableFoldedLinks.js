@@ -20,20 +20,22 @@
  */
 ZoomGrid.prototype.addDisableFoldedLinks = function()
 {
-	for( var n = 0; n < this.cells.length; n++ )
+	for( var n = this.cells.length; n--; )
 	{
-		var a = this.cells[n].getElementsByTagName( "a" );
+		var c = this.cells[n],
+			a = c.getElementsByTagName( 'a' );
 
-		if( !a ||
-			!a.length )
+		if( !a )
 			continue;
 
-		for( var i = 0; i < a.length; i++ )
+		for( var i = a.length; i--; )
 		{
-			a[i].disableZoomGrid = this;
-			a[i].disableCell = this.cells[n];
-			a[i].disableFoldedOldClick = a[i].onclick;
-			a[i].onclick = function( ev )
+			var ai  = a[i];
+
+			ai.disableZoomGrid = this;
+			ai.disableCell = c;
+			ai.disableFoldedOldClick = ai.onclick;
+			ai.onclick = function( ev )
 			{
 				if( this.disableCell != this.disableZoomGrid.active )
 					return false;

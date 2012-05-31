@@ -46,11 +46,12 @@ ZoomGrid.prototype.addHighlight = function()
 		e.onclick = this.leaveContainer;
 	}
 
-	for( var n = 0; n < this.cells.length; n++ )
+	for( var n = this.cells.length; n--; )
 	{
-		this.cells[n].onclick = this.enterCell;
-		this.cells[n].onmouseover = this.highlightCell;
-		this.cells[n].onmouseout = this.dimCell;
+		var c = this.cells[n];
+		c.onclick = this.enterCell;
+		c.onmouseover = this.highlightCell;
+		c.onmouseout = this.dimCell;
 	}
 
 	return true;
@@ -67,7 +68,7 @@ ZoomGrid.prototype.addHighlightOnClick = function()
 	if( this.zoomOnClick )
 		return false;
 
-	for( var n = 0; n < this.cells.length; n++ )
+	for( var n = this.cells.length; n--; )
 		this.cells[n].onclick = this.addHighlightToCell;
 
 	this.highlightOldRestore = this.restore;
@@ -78,10 +79,11 @@ ZoomGrid.prototype.addHighlightOnClick = function()
 			this.zoomOnClick = false;
 			this.container.onmouseout = this.leaveContainer;
 
-			for( var n = 0; n < this.cells.length; n++ )
+			for( var n = this.cells.length; n--; )
 			{
-				this.cells[n].onclick = this.addHighlightToCell;
-				this.cells[n].onmouseover = this.enterCell;
+				var c = this.cells[n];
+				c.onclick = this.addHighlightToCell;
+				c.onmouseover = this.enterCell;
 			}
 		}
 
@@ -119,8 +121,8 @@ ZoomGrid.prototype.highlightCell = function( ev )
 ZoomGrid.prototype.dimCell = function( ev )
 {
 	// find cell division which mouse has left
-	var z = null;
-	var left = null;
+	var z = null,
+		left = null;
 
 	for( var e = this;
 		e;

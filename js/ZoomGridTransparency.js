@@ -92,29 +92,28 @@ ZoomGrid.prototype.addTransparency = function()
 
 		// initialize opacity information
 		if( !this.cells[0].zoomGrid.opacity )
-			for( var n = 0; n < this.cells.length; n++ )
+			for( var n = this.cells.length; n--; )
 			{
-				var m =
-					Math.abs(
-						this.cells[n].offsetWidth-
-						this.cells[n].zoomGrid.targetWidth )+
-					Math.abs(
-						this.cells[n].offsetHeight-
-						this.cells[n].zoomGrid.targetHeight );
-				var o =
-					this.cells[n].zoomGrid.currentOpacity > 0 ?
-						this.cells[n].zoomGrid.currentOpacity :
-						this.opacityFocused;
-				var t;
+				var c = this.cells[n],
+					m = Math.abs(
+							c.offsetWidth-
+							c.zoomGrid.targetWidth )+
+						Math.abs(
+							c.offsetHeight-
+							c.zoomGrid.targetHeight ),
+					o = c.zoomGrid.currentOpacity > 0 ?
+						c.zoomGrid.currentOpacity :
+						this.opacityFocused,
+					t;
 
-				if( this.cells[n] == this.active )
+				if( c == this.active )
 					t = this.opacityFocused;
 				else if( !this.active )
 					t = this.opacityUnfocused;
 				else
 					t = this.opacityFolded;
 
-				this.cells[n].zoomGrid.opacity = {
+				c.zoomGrid.opacity = {
 					max: m,
 					offset: o,
 					target: t,
@@ -122,29 +121,29 @@ ZoomGrid.prototype.addTransparency = function()
 			}
 
 		// set opacity on every cell
-		for( var n = 0; n < this.cells.length; n++ )
+		for( var n = this.cells.length; n--; )
 		{
-			var o =
-				(this.cells[n].zoomGrid.opacity.max-(
-					Math.abs(
-						this.cells[n].offsetWidth-
-						this.cells[n].zoomGrid.targetWidth )+
-					Math.abs(
-						this.cells[n].offsetHeight-
-						this.cells[n].zoomGrid.targetHeight )))*
-				this.cells[n].zoomGrid.opacity.factor;
+			var c = this.cells[n],
+				o = (c.zoomGrid.opacity.max-(
+						Math.abs(
+							c.offsetWidth-
+							c.zoomGrid.targetWidth )+
+						Math.abs(
+							c.offsetHeight-
+							c.zoomGrid.targetHeight )))*
+					c.zoomGrid.opacity.factor;
 
-			if( this.cells[n].zoomGrid.opacity.target >
-				this.cells[n].zoomGrid.opacity.offset )
-				o = this.cells[n].zoomGrid.opacity.offset+o
+			if( c.zoomGrid.opacity.target >
+				c.zoomGrid.opacity.offset )
+				o = c.zoomGrid.opacity.offset+o
 			else
-				o = this.cells[n].zoomGrid.opacity.offset-o;
+				o = c.zoomGrid.opacity.offset-o;
 
-			this.setOpacity( this.cells[n], o );
+			this.setOpacity( c, o );
 		}
 	}
 
-	for( var n = 0; n < this.cells.length; n++ )
+	for( var n = this.cells.length; n--; )
 		this.setOpacity( this.cells[n], this.opacityUnfocused );
 
 	return true;
@@ -161,7 +160,7 @@ ZoomGrid.prototype.setOpacity = function( e, o )
 {
 	if( this.isIE )
 		e.style.filter =
-			"alpha(opacity="+Math.ceil( 100*o )+")";
+			'alpha(opacity='+Math.ceil( 100*o )+')';
 	else
 		e.style.opacity = o;
 

@@ -80,7 +80,7 @@ ZoomGrid.prototype.hideRestoreButton = function()
 	if( !this.restoreButton )
 		this.restoreButton = this.createRestoreButton();
 
-	this.restoreButton.style.visibility = "hidden";
+	this.restoreButton.style.visibility = 'hidden';
 }
 
 /**
@@ -97,8 +97,8 @@ ZoomGrid.prototype.showRestoreButton = function()
 	if( !this.restoreButton )
 		this.restoreButton = this.createRestoreButton();
 
-	var x = 0;
-	var y = 0;
+	var x = 0,
+		y = 0;
 
 	for( var e = this.active;
 		e;
@@ -111,9 +111,9 @@ ZoomGrid.prototype.showRestoreButton = function()
 			y += e.offsetTop;
 	}
 
-	this.restoreButton.style.left = x+"px";
-	this.restoreButton.style.top = y+"px";
-	this.restoreButton.style.visibility = "visible";
+	this.restoreButton.style.left = x+'px';
+	this.restoreButton.style.top = y+'px';
+	this.restoreButton.style.visibility = 'visible';
 }
 
 /**
@@ -123,12 +123,12 @@ ZoomGrid.prototype.showRestoreButton = function()
  */
 ZoomGrid.prototype.createRestoreButton = function()
 {
-	var a = document.createElement( "a" );
-	var d = document.createElement( "div" );
+	var a = document.createElement( 'a' ),
+		d = document.createElement( 'div' );
 
-	a.className = "ZoomGridRestoreButton";
-	a.href = "#";
-	a.innerHTML = "Close";
+	a.className = 'ZoomGridRestoreButton';
+	a.href = '#';
+	a.innerHTML = 'Close';
 
 	var t = this;
 	a.onclick = function()
@@ -139,16 +139,16 @@ ZoomGrid.prototype.createRestoreButton = function()
 		return false;
 	}
 
-	d.style.position = "absolute";
-	d.style.left = "0";
-	d.style.top = "0";
-	d.style.zIndex = "1";
-	d.style.visibility = "hidden";
+	d.style.position = 'absolute';
+	d.style.left = '0';
+	d.style.top = '0';
+	d.style.zIndex = '1';
+	d.style.visibility = 'hidden';
 	d.appendChild( a );
 
 	// add to body
 	{
-		var b = document.getElementsByTagName( "body" );
+		var b = document.getElementsByTagName( 'body' );
 
 		if( !b ||
 			!b.length )
