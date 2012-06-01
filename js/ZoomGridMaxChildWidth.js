@@ -17,16 +17,16 @@
  *
  * @access public
  * @param list - JSON list of elements to width attributes
+ * @param margin - margin width in pixels
  * @return true on success, false otherwise
  */
-ZoomGrid.prototype.addMaxChildWidth = function( list )
+ZoomGrid.prototype.addMaxChildWidth = function( list, margin )
 {
-	// reserve about 24 px for the scroll bar
 	var w = Math.round(
 		this.container.offsetWidth-
 		((this.columns-1)*(this.paddingMarginBorder.width+
 			(this.frameSize ? this.frameSize.width : 0)+
-			this.foldedSize.width)) )-24;
+			this.foldedSize.width)) )-margin;
 
 	for( var propertyName in list )
 	{
