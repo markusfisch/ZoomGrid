@@ -9,6 +9,7 @@
  * 2010,2012 Markus Fisch <mf@markusfisch.de>
  * Public Domain
  */
+"use strict";
 (function(){
 	/**
 	 * Hide given elements when cell is unfocused

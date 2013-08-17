@@ -9,6 +9,7 @@
  * 2010,2012 Markus Fisch <mf@markusfisch.de>
  * Public Domain
  */
+"use strict";
 (function(){
 	/** Total sum of frame size in horizontal and vertical direction */
 	ZoomGrid.prototype.frameSize = { width: 16, height: 16 };

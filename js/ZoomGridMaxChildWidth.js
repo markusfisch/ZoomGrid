@@ -9,6 +9,7 @@
  * 2010,2012 Markus Fisch <mf@markusfisch.de>
  * Public Domain
  */
+"use strict";
 (function(){
 	/**
 	 * Give certain child elements a fixed width

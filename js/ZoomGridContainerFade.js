@@ -9,6 +9,7 @@
  * 2010,2012 Markus Fisch <mf@markusfisch.de>
  * Public Domain
  */
+"use strict";
 (function(){
 	/** Duration (in ms) after which to fade out when inactive */
 	ZoomGrid.prototype.fadeOutAfter = 1000;

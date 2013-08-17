@@ -9,6 +9,7 @@
  * 2010,2012 Markus Fisch <mf@markusfisch.de>
  * Public Domain
  */
+"use strict";
 (function(){
 	/** Opacity of highlighted cell */
 	ZoomGrid.prototype.opacityHighlighted = .75;
