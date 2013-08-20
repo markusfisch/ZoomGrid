@@ -10,102 +10,101 @@
  * Public Domain
  */
 "use strict";
-(function(){
-	/**
-	 * Hide given elements when cell is unfocused
-	 *
-	 * @param patterns - array of tag names with optional class oder id extension
-	 * @return true on success, false otherwise
-	 */
-	ZoomGrid.prototype.addUnfocusedHide = function( patterns )
+
+/**
+ * Hide given elements when cell is unfocused
+ *
+ * @param patterns - array of tag names with optional class oder id extension
+ * @return true on success, false otherwise
+ */
+ZoomGrid.prototype.addUnfocusedHide = function( patterns )
+{
+	if( !patterns ||
+		!patterns.length )
+		return false;
+
+	/** Called before moving begins */
+	this.unfocusedHideOldStartMove = this.startMove;
+	this.startMove = function()
 	{
-		if( !patterns ||
-			!patterns.length )
-			return false;
+		this.unfocusedHideOldStartMove();
 
-		/** Called before moving begins */
-		this.unfocusedHideOldStartMove = this.startMove;
-		this.startMove = function()
+		if( !this.active ||
+			!this.active.zoomGrid )
+			return;
+
+		this.hideElements( this.active );
+	}
+
+	/** Called after moving has stopped */
+	this.unfocusedHideOldStopMove = this.stopMove;
+	this.stopMove = function()
+	{
+		this.unfocusedHideOldStopMove();
+
+		if( !this.active ||
+			!this.active.zoomGrid )
+			return;
+
+		this.showElements( this.active );
+	}
+
+	// find elements to hide
+	var pat = this.parsePatterns( patterns );
+
+	for( var n = this.cells.length; n--; )
+	{
+		var c = this.cells[n];
+		c.zoomGrid.elementsToHide = [];
+
+		for( var p = pat.length; p--; )
 		{
-			this.unfocusedHideOldStartMove();
+			var el = c.getElementsByTagName( pat[p].tagName ),
+				pp = pat[p];
 
-			if( !this.active ||
-				!this.active.zoomGrid )
-				return;
-
-			this.hideElements( this.active );
-		}
-
-		/** Called after moving has stopped */
-		this.unfocusedHideOldStopMove = this.stopMove;
-		this.stopMove = function()
-		{
-			this.unfocusedHideOldStopMove();
-
-			if( !this.active ||
-				!this.active.zoomGrid )
-				return;
-
-			this.showElements( this.active );
-		}
-
-		// find elements to hide
-		var pat = this.parsePatterns( patterns );
-
-		for( var n = this.cells.length; n--; )
-		{
-			var c = this.cells[n];
-			c.zoomGrid.elementsToHide = [];
-
-			for( var p = pat.length; p--; )
+			if( !pp.className &&
+				!pp.id )
 			{
-				var el = c.getElementsByTagName( pat[p].tagName ),
-					pp = pat[p];
-
-				if( !pp.className &&
-					!pp.id )
-				{
-					c.zoomGrid.elementsToHide.merge( el );
-					continue;
-				}
-
-				for( var e = el.length; e--; )
-				{
-					var ee = el[e];
-
-					if( ee.className == pp.className ||
-						ee.id == pp.id )
-						c.zoomGrid.elementsToHide.push( ee );
-				}
+				c.zoomGrid.elementsToHide.merge( el );
+				continue;
 			}
 
-			this.hideElements( this.cells[n] );
+			for( var e = el.length; e--; )
+			{
+				var ee = el[e];
+
+				if( ee.className == pp.className ||
+					ee.id == pp.id )
+					c.zoomGrid.elementsToHide.push( ee );
+			}
 		}
 
-		return true;
+		this.hideElements( this.cells[n] );
 	}
 
-	/**
-	 * Hide elements
-	 *
-	 * @param e - cell element
-	 */
-	ZoomGrid.prototype.hideElements = function( e )
-	{
-		e = e.zoomGrid.elementsToHide;
-		for( var n = e.length; n--; )
-			e[n].style.display = 'none';
-	}
+	return true;
+}
 
-	/**
-	 * Show elements
-	 *
-	 * @param e - cell element
-	 */
-	ZoomGrid.prototype.showElements = function( e )
-	{
-		e = e.zoomGrid.elementsToHide;
-		for( var n = e.length; n--; )
-			e[n].style.display = 'block';
-	}
-})();
+/**
+ * Hide elements
+ *
+ * @param e - cell element
+ */
+ZoomGrid.prototype.hideElements = function( e )
+{
+	e = e.zoomGrid.elementsToHide;
+	for( var n = e.length; n--; )
+		e[n].style.display = 'none';
+}
+
+/**
+ * Show elements
+ *
+ * @param e - cell element
+ */
+ZoomGrid.prototype.showElements = function( e )
+{
+	e = e.zoomGrid.elementsToHide;
+	for( var n = e.length; n--; )
+		e[n].style.display = 'block';
+}

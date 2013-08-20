@@ -10,41 +10,40 @@
  * Public Domain
  */
 "use strict";
-(function(){
-	/**
-	 * Disable links when cell is folded
-	 *
-	 * @return true on success, false otherwise
-	 */
-	ZoomGrid.prototype.addDisableFoldedLinks = function()
+
+/**
+ * Disable links when cell is folded
+ *
+ * @return true on success, false otherwise
+ */
+ZoomGrid.prototype.addDisableFoldedLinks = function()
+{
+	for( var n = this.cells.length; n--; )
 	{
-		for( var n = this.cells.length; n--; )
+		var c = this.cells[n],
+			a = c.getElementsByTagName( 'a' );
+
+		if( !a )
+			continue;
+
+		for( var i = a.length; i--; )
 		{
-			var c = this.cells[n],
-				a = c.getElementsByTagName( 'a' );
+			var ai  = a[i];
 
-			if( !a )
-				continue;
-
-			for( var i = a.length; i--; )
+			ai.disableZoomGrid = this;
+			ai.disableCell = c;
+			ai.disableFoldedOldClick = ai.onclick;
+			ai.onclick = function( ev )
 			{
-				var ai  = a[i];
+				if( this.disableCell != this.disableZoomGrid.active )
+					return false;
 
-				ai.disableZoomGrid = this;
-				ai.disableCell = c;
-				ai.disableFoldedOldClick = ai.onclick;
-				ai.onclick = function( ev )
-				{
-					if( this.disableCell != this.disableZoomGrid.active )
-						return false;
-
-					return this.disableFoldedOldClick ?
-						this.disableFoldedOldClick() :
-						true;
-				}
+				return this.disableFoldedOldClick ?
+					this.disableFoldedOldClick() :
+					true;
 			}
 		}
-
-		return true;
 	}
-})();
+
+	return true;
+}
